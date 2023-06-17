@@ -28,10 +28,12 @@ const Home: React.FC = () => {
   return (
     <>
       <S.ContainerContent>
+        <S.Teste>Filtros vão ficar aqui</S.Teste>
         <div>
           <S.ContainerTitle>
             <S.Image src={flag?.png} alt={flag?.alt} />
             <S.Title>Catedral de Milão</S.Title>
+            <S.Wallpaper src="https://i0.wp.com/tournaitalia.com/wp-content/uploads/2021/08/milan-883761_1280.jpeg?ssl=1" />
           </S.ContainerTitle>
           <S.ContainerText>
             <S.Paragraph>
@@ -48,7 +50,6 @@ const Home: React.FC = () => {
             <S.Paragraph>Entrada: Paga</S.Paragraph>
           </S.ContainerText>
         </div>
-        <S.Wallpaper src="https://i0.wp.com/tournaitalia.com/wp-content/uploads/2021/08/milan-883761_1280.jpeg?ssl=1" />
       </S.ContainerContent>
       <S.ContainerGlobo>
         <Globo />
