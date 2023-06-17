@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import * as S from "./styled";
 import { getFlag } from "../../server/index";
 import { Globo } from "../../components";
+import { arrow } from "../../assets/icon";
 
 interface Flag {
   svg: string;
@@ -25,6 +26,14 @@ const Home: React.FC = () => {
     fetchFlag();
   }, [name]);
 
+  const nextAttractions = () => {
+    console.log("OK");
+    setName("germany");
+    if (name === "germany") {
+      setName("italy");
+    }
+  };
+
   return (
     <>
       <S.ContainerContent>
@@ -34,6 +43,7 @@ const Home: React.FC = () => {
             <S.Image src={flag?.png} alt={flag?.alt} />
             <S.Title>Catedral de Milão</S.Title>
             <S.Wallpaper src="https://i0.wp.com/tournaitalia.com/wp-content/uploads/2021/08/milan-883761_1280.jpeg?ssl=1" />
+            <S.Arrow src={arrow} onClick={nextAttractions} />
           </S.ContainerTitle>
           <S.ContainerText>
             <S.Paragraph>

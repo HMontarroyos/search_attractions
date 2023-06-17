@@ -39,7 +39,7 @@ export const Image = styled.img`
 `;
 
 export const Wallpaper = styled.img`
-  border-radius: 18% 0 0 10%;
+  border-radius: 18% 0 0 0;
   position: absolute;
   z-index: -1;
   top: 0;
@@ -47,6 +47,22 @@ export const Wallpaper = styled.img`
   height: 100vh;
   width: 50%;
   object-fit: cover;
+`;
+
+export const Arrow = styled.img`
+  position: absolute;
+  top: 350%;
+  left: 90%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  
+  &:hover {
+    width: 120px;
+    height: 120px;
+  }
 `;
 
 export const ContainerText = styled.div`
