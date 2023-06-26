@@ -3,16 +3,15 @@ import styled from "styled-components";
 export const ContainerContent = styled.div`
   display: flex;
   justify-content: center;
-  align-items: right;
   flex-direction: column;
   padding-left: 40px;
   margin-left: 40px;
 `;
 
-export const Teste = styled.h1`
-  color: white;
-  padding-top: 40px;
-  padding-bottom: 40px;
+export const ContainerSelect = styled.div`
+  display: flex;
+  flex-direction: row !important;
+  padding-left: 20px;
 `;
 
 export const ContainerTitle = styled.div`
@@ -58,7 +57,7 @@ export const Arrow = styled.img`
   height: 100px;
   transition: all 0.3s ease-in-out;
   cursor: pointer;
-  
+
   &:hover {
     width: 120px;
     height: 120px;
@@ -70,6 +69,15 @@ export const ContainerText = styled.div`
   display: flex;
   flex-direction: column;
   margin-left: 190px;
+  padding: 20px;
+
+  background: rgba(6, 39, 40, 0.70);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur( 4px );
+  -webkit-backdrop-filter: blur( 4px );
+  border-radius: 20px;
+
+
 `;
 
 export const Paragraph = styled.p`
