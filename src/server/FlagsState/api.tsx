@@ -3,13 +3,13 @@ import axios from "axios";
 const baseUrl = "https://api-search-attractions.vercel.app/states";
 const api = axios.create({ baseURL: baseUrl });
 
-export const getFlagState = async (state: string): Promise<any> => {
+export const getState = async (state: string): Promise<any> => {
   try {
     const response = await api.get(`${baseUrl}/${state}`);
-    return response.data.images;
+    return response.data;
   } catch (error) {
     console.error(error);
-    throw new Error(`Error fetching flag in state: ${state}`);
+    throw new Error(`Error fetching  in state: ${state}`);
   }
 };
 
