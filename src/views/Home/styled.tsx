@@ -71,13 +71,11 @@ export const ContainerText = styled.div`
   margin-left: 190px;
   padding: 20px;
 
-  background: rgba(6, 39, 40, 0.70);
+  background: rgba(6, 39, 40, 0.7);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur( 4px );
-  -webkit-backdrop-filter: blur( 4px );
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border-radius: 20px;
-
-
 `;
 
 export const Paragraph = styled.p`
@@ -89,9 +87,20 @@ export const Paragraph = styled.p`
 `;
 
 export const ContainerGlobo = styled.div`
-  display: flex;
+  /*   display: flex;
   flex-direction: column;
   align-items: self-start;
   margin-top: 20px;
-  margin-left: 40px;
+  margin-left: 40px; */
+
+  position: relative;
+  z-index: -1;
+`;
+
+export const Mape = styled.img`
+  width: 400px;
+  height: 400px;
+  position: absolute;
+  top: -80px;
+  left: 0;
 `;

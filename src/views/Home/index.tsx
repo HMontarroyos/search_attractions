@@ -3,7 +3,7 @@ import * as S from "./styled";
 import {
   getFlag,
   getAttractionsAllCountry,
-  getFlagState,
+  getState,
   getAllStates,
   getAttractionsAllState,
 } from "../../server/index";
@@ -19,13 +19,22 @@ const { Search } = Input;
   alt: string;
 } */
 
-interface Flag {
-  image: string;
-  alt: string;
+interface State {
+  _id: string;
+  name: string;
+  acronym: string;
+  region: string;
+  country: string;
+  countryExhibition: string;
+  images: {
+    alt: string;
+    image: string;
+  };
+  mape: string;
 }
 
 const Home: React.FC = () => {
-  const [flag, setFlag] = useState<Flag>();
+  const [state, setState] = useState<State>();
   const [attractions, setAttractions] = useState<any>(null);
   const [attractionsDefault, setAttractionsDefault] = useState<any>(null);
   const [allStates, setAllStates] = useState<any>(null);
@@ -37,9 +46,9 @@ const Home: React.FC = () => {
       try {
         if (selectedState) {
           const _attractions = await getAttractionsAllState(selectedState);
-          const _flag = await getFlagState(_attractions[0].stateAcronym);
+          const _state = await getState(_attractions[0].stateAcronym);
           const _allStates = await getAllStates();
-          setFlag(_flag);
+          setState(_state);
           setAllStates(_allStates);
           setAttractions(_attractions);
           setAttractionsDefault(_attractions)
@@ -158,7 +167,7 @@ const searchOperation = (option: string) => {
   return (
     <>
       <S.ContainerContent>
-        {attractions ? (
+        {attractions && state ? (
           <>
             <S.ContainerSelect>
               <div style={{ margin: "40px 20px 40px 0" }}>
@@ -233,7 +242,7 @@ const searchOperation = (option: string) => {
             </S.ContainerSelect>
             <div>
               <S.ContainerTitle>
-                <S.Image src={flag?.image} alt={flag?.alt} />
+                <S.Image src={state.images?.image} alt={state.images?.alt} />
                 <S.Title>{attractions[currentAttractionIndex].name}</S.Title>
                 <S.Wallpaper
                   src={attractions[currentAttractionIndex].images.image}
@@ -265,9 +274,12 @@ const searchOperation = (option: string) => {
           <Loading />
         )}
       </S.ContainerContent>
-      <S.ContainerGlobo>
-        <Globo />
-      </S.ContainerGlobo>
+      {state && (
+        <S.ContainerGlobo>
+          {/* <Globo /> */}
+          <S.Mape src={state.mape} alt={state.name} />
+        </S.ContainerGlobo>
+      )}
     </>
   );
 };
