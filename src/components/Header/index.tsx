@@ -4,14 +4,14 @@ import { icon } from "../../assets/icon";
 function Header(): JSX.Element {
   return (
     <>
-      <S.Menu height="60px">
-        <S.NavItems>
+      <S.Menu height="20px">
+{/*         <S.NavItems>
           <div>
             <S.LinkRedirect to={"/"} data-item={"Inicio"}>
               <img src={icon} width={"50px"} height={"50px"} />
             </S.LinkRedirect>
           </div>
-        </S.NavItems>
+        </S.NavItems> */}
       </S.Menu>
     </>
   );
