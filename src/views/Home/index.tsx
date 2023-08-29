@@ -1,33 +1,15 @@
 import React, { useEffect, useState } from "react";
 import * as S from "./styled";
 import {
-  getFlag,
-  getAttractionsAllCountry,
   getState,
   getAllStates,
   getAttractionsAllState,
 } from "../../server/index";
-import { Globo, Loading } from "../../components";
-import { arrow } from "../../assets/icon";
-import { Space, Select, Input } from "antd";
-import {
-  format,
-  getDay,
-  getHours,
-  getMinutes,
-  getSeconds,
-  isAfter,
-  isBefore,
-  parse,
-} from "date-fns";
+import { Loading } from "../../components";
+import { arrowRight, arrowLeft } from "../../assets/icon";
+import { Select, Input } from "antd";
 import { normalizeString } from "../../utils";
 const { Search } = Input;
-
-/* interface Flag {
-  svg: string;
-  png: string;
-  alt: string;
-} */
 
 interface State {
   _id: string;
@@ -75,7 +57,6 @@ const Home: React.FC = () => {
     setCurrentAttractionIndex((prevIndex) => {
       const nextIndex = prevIndex + 1;
       if (nextIndex >= attractions.length) {
-        // Voltar ao início se atingir o fim do array
         return 0;
       } else {
         return nextIndex;
@@ -83,19 +64,23 @@ const Home: React.FC = () => {
     });
   };
 
-  const searchAttractionName = (event: string) => {
-    const normalizedSearch = event
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+  const previewAttraction = () => {
+    setCurrentAttractionIndex((prevIndex) => {
+      const previewIndex = prevIndex - 1;
+      if (previewIndex >= attractions.length) {
+        return 0;
+      } else {
+        return previewIndex;
+      }
+    });
+  };
 
-    if (normalizedSearch.length >= 3) {
+  const searchAttractionName = (event: string) => {
+    if (normalizeString(event).length >= 3) {
       const filteredAttractions = attractions.filter((attraction: any) => {
-        const normalizedAttractionName = attraction.name
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "");
-        return normalizedAttractionName.includes(normalizedSearch);
+        return normalizeString(attraction.name).includes(
+          normalizeString(event)
+        );
       });
 
       if (filteredAttractions.length > 0) {
@@ -115,12 +100,10 @@ const Home: React.FC = () => {
   };
 
   const searchEntry = (value: string) => {
-    console.log("VALUE", value);
-    console.log("DEFAULT", attractionsDefault);
-    if(value === "Todos"){
+    if (value === "Todos") {
       setAttractions(attractionsDefault);
       setCurrentAttractionIndex(0);
-      return
+      return;
     }
     const filteredAttractions = attractionsDefault.filter((attraction: any) => {
       return normalizeString(attraction.entry) === normalizeString(value);
@@ -130,88 +113,13 @@ const Home: React.FC = () => {
     setCurrentAttractionIndex(0); // Resetar o índice para o início
   };
 
-  const searchOperation = (option: string) => {
-    const currentDate = new Date();
-    const currentDayNumber = getDay(currentDate);
-    const daysOfWeek = [
-      "Domingo",
-      "Segunda-feira",
-      "Terça-feira",
-      "Quarta-feira",
-      "Quinta-feira",
-      "Sexta-feira",
-      "Sábado",
-    ];
-    const currentDayName = daysOfWeek[currentDayNumber];
-    const currentHour = format(currentDate, "HH:mm");
-
-    let filteredAttractions = [];
-
-    if (option === "aberto") {
-      filteredAttractions = attractions.filter((attraction: any) => {
-        const operations = attraction.operation;
-        const currentOperation = operations.find(
-          (operation: any) => operation.day === currentDayName
-        );
-
-        if (currentOperation) {
-          const openingTime = parse(
-            currentOperation.hourOpening,
-            "HH:mm",
-            new Date()
-          );
-          const closingTime = parse(
-            currentOperation.hourClosing,
-            "HH:mm",
-            new Date()
-          );
-
-          const isOpen =
-            isAfter(currentDate, openingTime) &&
-            isBefore(currentDate, closingTime);
-          return isOpen;
-        }
-        return false; // Nenhuma operação encontrada, atração é considerada fechada
-      });
-    } else if (option === "fechado") {
-      filteredAttractions = attractions.filter((attraction: any) => {
-        const operations = attraction.operation;
-        const currentOperation = operations.find(
-          (operation: any) => operation.day === currentDayName
-        );
-
-        if (currentOperation) {
-          const openingTime = parse(
-            currentOperation.hourOpening,
-            "HH:mm",
-            new Date()
-          );
-          const closingTime = parse(
-            currentOperation.hourClosing,
-            "HH:mm",
-            new Date()
-          );
-
-          const isOutsideOpeningHours =
-            isBefore(currentDate, openingTime) ||
-            isAfter(currentDate, closingTime);
-          return isOutsideOpeningHours;
-        }
-        return true; // Nenhuma operação encontrada, atração é considerada fechada
-      });
-    }
-
-    setAttractions(filteredAttractions);
-    setCurrentAttractionIndex(0);
-  };
-
   return (
     <>
       <S.ContainerContent>
         {attractions && state ? (
           <>
             <S.ContainerSelect>
-              <div style={{ margin: "40px 20px 40px 0" }}>
+              <S.ContainerSearch first>
                 <Select
                   onChange={searchState}
                   showSearch
@@ -237,8 +145,8 @@ const Home: React.FC = () => {
                     value: state.acronym,
                   }))}
                 />
-              </div>
-              <div style={{ margin: "40px 20px 40px 0" }}>
+              </S.ContainerSearch>
+              <S.ContainerSearch>
                 <Select
                   placeholder="Entrada"
                   onChange={searchEntry}
@@ -264,27 +172,8 @@ const Home: React.FC = () => {
                     },
                   ]}
                 />
-              </div>
-              <div style={{ margin: "40px 20px 40px 0" }}>
-                <Select
-                  placeholder="Funcionamento"
-                  onChange={searchOperation}
-                  style={{
-                    width: 200,
-                  }}
-                  options={[
-                    {
-                      value: "aberto",
-                      label: "Aberto",
-                    },
-                    {
-                      value: "fechado",
-                      label: "Fechado",
-                    },
-                  ]}
-                />
-              </div>
-              <div style={{ margin: "40px 20px 40px 0" }}>
+              </S.ContainerSearch>
+              <S.ContainerSearch>
                 <Search
                   placeholder="Digite o nome da atração"
                   allowClear
@@ -293,11 +182,10 @@ const Home: React.FC = () => {
                     width: 300,
                   }}
                 />
-              </div>
+              </S.ContainerSearch>
             </S.ContainerSelect>
             {attractions.length > 0 ? (
               <>
-                <div>
                   <S.ContainerTitle>
                     <S.Image
                       src={state.images?.image}
@@ -306,14 +194,27 @@ const Home: React.FC = () => {
                     <S.Title>
                       {attractions[currentAttractionIndex].name}
                     </S.Title>
+                  </S.ContainerTitle>
+                  <S.ContainerWallpaper>
                     <S.Wallpaper
                       src={attractions[currentAttractionIndex].images.image}
                       alt={attractions[currentAttractionIndex].images.alt}
                     />
-                    {attractions.length > 1 && (
-                      <S.Arrow src={arrow} onClick={nextAttraction} />
+                    {attractions.length > 1 && currentAttractionIndex > 0 && (
+                      <S.ArrowLeft
+                        src={arrowLeft}
+                        onClick={previewAttraction}
+                      />
                     )}
-                  </S.ContainerTitle>
+                    {attractions.length > 1 &&
+                      currentAttractionIndex < attractions.length - 1 && (
+                        <S.ArrowRight
+                          src={arrowRight}
+                          onClick={nextAttraction}
+                        />
+                      )}
+                  </S.ContainerWallpaper>
+                  {/* </S.ContainerTitle> */}
                   <S.ContainerText>
                     <S.Paragraph>
                       {attractions[currentAttractionIndex].description}
@@ -321,16 +222,20 @@ const Home: React.FC = () => {
                     <S.Paragraph>
                       {`Endereço: ${attractions[currentAttractionIndex].address}`}
                     </S.Paragraph>
-                    <S.Paragraph>Horas: Aberto ⋅ Fecha às 19:00</S.Paragraph>
+                    <S.Paragraph>
+                      Horário de Funcionamento: Favor verificar no site ou com a
+                      equipe de administração responsável pela atração{" "}
+                    </S.Paragraph>
                     <S.Paragraph>
                       {`Entrada: ${
-                        normalizeString(attractions[currentAttractionIndex].entry) === normalizeString("Varia")
+                        normalizeString(
+                          attractions[currentAttractionIndex].entry
+                        ) === normalizeString("Varia")
                           ? "Varia (Depende do dia de visita) "
                           : attractions[currentAttractionIndex].entry
                       }`}
                     </S.Paragraph>
                   </S.ContainerText>
-                </div>
               </>
             ) : (
               <h1>Attractions</h1>
