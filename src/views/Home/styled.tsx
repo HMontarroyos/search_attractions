@@ -86,13 +86,7 @@ export const Paragraph = styled.p`
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 `;
 
-export const ContainerGlobo = styled.div`
-  /*   display: flex;
-  flex-direction: column;
-  align-items: self-start;
-  margin-top: 20px;
-  margin-left: 40px; */
-
+export const ContainerMape = styled.div`
   position: relative;
   z-index: -1;
 `;

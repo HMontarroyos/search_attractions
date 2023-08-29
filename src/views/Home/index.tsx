@@ -10,7 +10,17 @@ import {
 import { Globo, Loading } from "../../components";
 import { arrow } from "../../assets/icon";
 import { Space, Select, Input } from "antd";
-import { format, getDay, getHours, getMinutes, getSeconds, isAfter, isBefore, parse } from 'date-fns';
+import {
+  format,
+  getDay,
+  getHours,
+  getMinutes,
+  getSeconds,
+  isAfter,
+  isBefore,
+  parse,
+} from "date-fns";
+import { normalizeString } from "../../utils";
 const { Search } = Input;
 
 /* interface Flag {
@@ -51,7 +61,7 @@ const Home: React.FC = () => {
           setState(_state);
           setAllStates(_allStates);
           setAttractions(_attractions);
-          setAttractionsDefault(_attractions)
+          setAttractionsDefault(_attractions); // Armazena as atrações originais
           setCurrentAttractionIndex(0); // Resetar o índice para o início
         }
       } catch (error) {
@@ -105,64 +115,95 @@ const Home: React.FC = () => {
   };
 
   const searchEntry = (value: string) => {
-    const filteredAttractions = attractions.filter((attraction: any) => {
-      return attraction.entry === value;
+    console.log("VALUE", value);
+    console.log("DEFAULT", attractionsDefault);
+    if(value === "Todos"){
+      setAttractions(attractionsDefault);
+      setCurrentAttractionIndex(0);
+      return
+    }
+    const filteredAttractions = attractionsDefault.filter((attraction: any) => {
+      return normalizeString(attraction.entry) === normalizeString(value);
     });
 
     setAttractions(filteredAttractions);
     setCurrentAttractionIndex(0); // Resetar o índice para o início
   };
 
+  const searchOperation = (option: string) => {
+    const currentDate = new Date();
+    const currentDayNumber = getDay(currentDate);
+    const daysOfWeek = [
+      "Domingo",
+      "Segunda-feira",
+      "Terça-feira",
+      "Quarta-feira",
+      "Quinta-feira",
+      "Sexta-feira",
+      "Sábado",
+    ];
+    const currentDayName = daysOfWeek[currentDayNumber];
+    const currentHour = format(currentDate, "HH:mm");
 
-const searchOperation = (option: string) => {
-  const currentDate = new Date();
-  const currentDayNumber = getDay(currentDate);
-  const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-  const currentDayName = daysOfWeek[currentDayNumber];
-  const currentHour = format(currentDate, 'HH:mm');
+    let filteredAttractions = [];
 
-  let filteredAttractions = [];
+    if (option === "aberto") {
+      filteredAttractions = attractions.filter((attraction: any) => {
+        const operations = attraction.operation;
+        const currentOperation = operations.find(
+          (operation: any) => operation.day === currentDayName
+        );
 
-  if (option === 'aberto') {
-    filteredAttractions = attractions.filter((attraction: any) => {
-      const operations = attraction.operation;
-      const currentOperation = operations.find((operation: any) => operation.day === currentDayName);
+        if (currentOperation) {
+          const openingTime = parse(
+            currentOperation.hourOpening,
+            "HH:mm",
+            new Date()
+          );
+          const closingTime = parse(
+            currentOperation.hourClosing,
+            "HH:mm",
+            new Date()
+          );
 
-      if (currentOperation) {
-        const openingTime = parse(currentOperation.hourOpening, 'HH:mm', new Date());
-        const closingTime = parse(currentOperation.hourClosing, 'HH:mm', new Date());
+          const isOpen =
+            isAfter(currentDate, openingTime) &&
+            isBefore(currentDate, closingTime);
+          return isOpen;
+        }
+        return false; // Nenhuma operação encontrada, atração é considerada fechada
+      });
+    } else if (option === "fechado") {
+      filteredAttractions = attractions.filter((attraction: any) => {
+        const operations = attraction.operation;
+        const currentOperation = operations.find(
+          (operation: any) => operation.day === currentDayName
+        );
 
-        const isOpen = isAfter(currentDate, openingTime) && isBefore(currentDate, closingTime);
-        return isOpen;
-      } else {
-        return false;
-      }
-    });
-  } else if (option === 'fechado') {
-    filteredAttractions = attractions.filter((attraction: any) => {
-      const operations = attraction.operation;
-      const currentOperation = operations.find((operation: any) => operation.day === currentDayName);
+        if (currentOperation) {
+          const openingTime = parse(
+            currentOperation.hourOpening,
+            "HH:mm",
+            new Date()
+          );
+          const closingTime = parse(
+            currentOperation.hourClosing,
+            "HH:mm",
+            new Date()
+          );
 
-      if (currentOperation) {
-        const openingTime = parse(currentOperation.hourOpening, 'HH:mm', new Date());
-        const closingTime = parse(currentOperation.hourClosing, 'HH:mm', new Date());
+          const isOutsideOpeningHours =
+            isBefore(currentDate, openingTime) ||
+            isAfter(currentDate, closingTime);
+          return isOutsideOpeningHours;
+        }
+        return true; // Nenhuma operação encontrada, atração é considerada fechada
+      });
+    }
 
-        const isOutsideOpeningHours = isBefore(currentDate, openingTime) || isAfter(currentDate, closingTime);
-        return isOutsideOpeningHours;
-      } else {
-        return true;
-      }
-    });
-  }
-
-  setAttractions(filteredAttractions);
-  setCurrentAttractionIndex(0);
-};
-
-
-  
-
-  
+    setAttractions(filteredAttractions);
+    setCurrentAttractionIndex(0);
+  };
 
   return (
     <>
@@ -204,10 +245,24 @@ const searchOperation = (option: string) => {
                   style={{
                     width: 200,
                   }}
-                  options={attractions.map((attraction: any, id: number) => ({
-                    label: attraction.entry,
-                    value: attraction.entry,
-                  }))}
+                  options={[
+                    {
+                      value: "Gratuito",
+                      label: "Gratuito",
+                    },
+                    {
+                      value: "Pago",
+                      label: "Pago",
+                    },
+                    {
+                      value: "Varia",
+                      label: "Varia",
+                    },
+                    {
+                      value: "Todos",
+                      label: "Todos",
+                    },
+                  ]}
                 />
               </div>
               <div style={{ margin: "40px 20px 40px 0" }}>
@@ -240,45 +295,55 @@ const searchOperation = (option: string) => {
                 />
               </div>
             </S.ContainerSelect>
-            <div>
-              <S.ContainerTitle>
-                <S.Image src={state.images?.image} alt={state.images?.alt} />
-                <S.Title>{attractions[currentAttractionIndex].name}</S.Title>
-                <S.Wallpaper
-                  src={attractions[currentAttractionIndex].images.image}
-                  alt={attractions[currentAttractionIndex].images.alt}
-                />
-                <S.Arrow src={arrow} onClick={nextAttraction} />
-              </S.ContainerTitle>
-              <S.ContainerText>
-                <S.Paragraph>
-                  {attractions[currentAttractionIndex].description}
-                </S.Paragraph>
-                <S.Paragraph>
-                  {`Endereço: ${attractions[currentAttractionIndex].address}`}
-                </S.Paragraph>
-                <S.Paragraph>
-                Horas: Aberto ⋅ Fecha às 19:00
-                </S.Paragraph>
-                <S.Paragraph>
-                  {`Entrada: ${
-                    attractions[currentAttractionIndex].entry === "Varia"
-                      ? "Varia (Depende do dia de visita) "
-                      : attractions[currentAttractionIndex].entry
-                  }`}
-                </S.Paragraph>
-              </S.ContainerText>
-            </div>
+            {attractions.length > 0 ? (
+              <>
+                <div>
+                  <S.ContainerTitle>
+                    <S.Image
+                      src={state.images?.image}
+                      alt={state.images?.alt}
+                    />
+                    <S.Title>
+                      {attractions[currentAttractionIndex].name}
+                    </S.Title>
+                    <S.Wallpaper
+                      src={attractions[currentAttractionIndex].images.image}
+                      alt={attractions[currentAttractionIndex].images.alt}
+                    />
+                    {attractions.length > 1 && (
+                      <S.Arrow src={arrow} onClick={nextAttraction} />
+                    )}
+                  </S.ContainerTitle>
+                  <S.ContainerText>
+                    <S.Paragraph>
+                      {attractions[currentAttractionIndex].description}
+                    </S.Paragraph>
+                    <S.Paragraph>
+                      {`Endereço: ${attractions[currentAttractionIndex].address}`}
+                    </S.Paragraph>
+                    <S.Paragraph>Horas: Aberto ⋅ Fecha às 19:00</S.Paragraph>
+                    <S.Paragraph>
+                      {`Entrada: ${
+                        normalizeString(attractions[currentAttractionIndex].entry) === normalizeString("Varia")
+                          ? "Varia (Depende do dia de visita) "
+                          : attractions[currentAttractionIndex].entry
+                      }`}
+                    </S.Paragraph>
+                  </S.ContainerText>
+                </div>
+              </>
+            ) : (
+              <h1>Attractions</h1>
+            )}
           </>
         ) : (
           <Loading />
         )}
       </S.ContainerContent>
       {state && (
-        <S.ContainerGlobo>
-          {/* <Globo /> */}
+        <S.ContainerMape>
           <S.Mape src={state.mape} alt={state.name} />
-        </S.ContainerGlobo>
+        </S.ContainerMape>
       )}
     </>
   );
