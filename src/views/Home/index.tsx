@@ -321,7 +321,7 @@ const Home: React.FC = () => {
                     <S.Paragraph>
                       {`Endereço: ${attractions[currentAttractionIndex].address}`}
                     </S.Paragraph>
-                    <S.Paragraph>Horas: Aberto ⋅ Fecha às 19:00</S.Paragraph>
+                    <S.Paragraph>Horas: Aberto ⋅. Fecha às 19:00</S.Paragraph>
                     <S.Paragraph>
                       {`Entrada: ${
                         normalizeString(attractions[currentAttractionIndex].entry) === normalizeString("Varia")
