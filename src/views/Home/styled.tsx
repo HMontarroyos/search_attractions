@@ -128,7 +128,7 @@ export const ArrowRight = styled.img`
 export const ArrowLeft = styled.img`
   position: absolute;
   top: 100%;
-  left: 40%;
+  left: 65%;
   transform: translate(-50%, -50%);
   width: 100px;
   height: 100px;
@@ -140,15 +140,14 @@ export const ArrowLeft = styled.img`
     height: 120px;
   }
 
-   @media (max-width: 800px) {
+  @media (max-width: 800px) {
     top: 130%;
     left: 35%;
   }
 
-  @media (min-width: 300px) {
+  @media (min-width: 801px) and (max-width: 300px) {
     left: 30%;
   } 
-  
 `;
 
 export const ContainerText = styled.div`
