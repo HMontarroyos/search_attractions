@@ -1,4 +1,5 @@
 import icon from "../icon/icon.png";
-import arrow from "../icon/arrow.png";
+import arrowRight from "../icon/arrow_right.png";
+import arrowLeft from "../icon/arrow_left.png";
 
-export { icon, arrow };
+export { icon, arrowRight, arrowLeft };
