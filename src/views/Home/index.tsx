@@ -9,6 +9,7 @@ import { Loading } from "../../components";
 import { arrowRight, arrowLeft } from "../../assets/icon";
 import { Select, Input } from "antd";
 import { normalizeString } from "../../utils";
+import { LoadingImage } from "../../assets/images";
 const { Search } = Input;
 
 interface State {
@@ -186,59 +187,67 @@ const Home: React.FC = () => {
             </S.ContainerSelect>
             {attractions.length > 0 ? (
               <>
-                  <S.ContainerTitle>
-                    <S.Image
-                      src={state.images?.image}
-                      alt={state.images?.alt}
-                    />
-                    <S.Title>
-                      {attractions[currentAttractionIndex].name}
-                    </S.Title>
-                  </S.ContainerTitle>
-                  <S.ContainerWallpaper>
-                    <S.Wallpaper
-                      src={attractions[currentAttractionIndex].images.image}
-                      alt={attractions[currentAttractionIndex].images.alt}
-                    />
-                    {attractions.length > 1 && currentAttractionIndex > 0 && (
-                      <S.ArrowLeft
-                        src={arrowLeft}
-                        onClick={previewAttraction}
-                      />
+                <S.ContainerTitle>
+                  <S.Image src={state.images?.image} alt={state.images?.alt} />
+                  <S.Title>{attractions[currentAttractionIndex].name}</S.Title>
+                </S.ContainerTitle>
+                <S.ContainerWallpaper>
+                  <S.Wallpaper
+                    src={attractions[currentAttractionIndex].images.image}
+                    alt={attractions[currentAttractionIndex].images.alt}
+                  />
+                  {attractions.length > 1 && currentAttractionIndex > 0 && (
+                    <S.ArrowLeft src={arrowLeft} onClick={previewAttraction} />
+                  )}
+                  {attractions.length > 1 &&
+                    currentAttractionIndex < attractions.length - 1 && (
+                      <S.ArrowRight src={arrowRight} onClick={nextAttraction} />
                     )}
-                    {attractions.length > 1 &&
-                      currentAttractionIndex < attractions.length - 1 && (
-                        <S.ArrowRight
-                          src={arrowRight}
-                          onClick={nextAttraction}
-                        />
-                      )}
-                  </S.ContainerWallpaper>
-                  {/* </S.ContainerTitle> */}
-                  <S.ContainerText>
-                    <S.Paragraph>
-                      {attractions[currentAttractionIndex].description}
-                    </S.Paragraph>
-                    <S.Paragraph>
-                      {`Endereço: ${attractions[currentAttractionIndex].address}`}
-                    </S.Paragraph>
-                    <S.Paragraph>
-                      Horário de Funcionamento: Favor verificar no site ou com a
-                      equipe de administração responsável pela atração{" "}
-                    </S.Paragraph>
-                    <S.Paragraph>
-                      {`Entrada: ${
-                        normalizeString(
-                          attractions[currentAttractionIndex].entry
-                        ) === normalizeString("Varia")
-                          ? "Varia (Depende do dia de visita) "
-                          : attractions[currentAttractionIndex].entry
-                      }`}
-                    </S.Paragraph>
-                  </S.ContainerText>
+                </S.ContainerWallpaper>
+                {/* </S.ContainerTitle> */}
+                <S.ContainerText>
+                  <S.Paragraph>
+                    {attractions[currentAttractionIndex].description}
+                  </S.Paragraph>
+                  <S.Paragraph>
+                    {`Endereço: ${attractions[currentAttractionIndex].address}`}
+                  </S.Paragraph>
+                  <S.Paragraph>
+                    Horário de Funcionamento: Favor verificar no site ou com a
+                    equipe de administração responsável pela atração{" "}
+                  </S.Paragraph>
+                  <S.Paragraph>
+                    {`Entrada: ${
+                      normalizeString(
+                        attractions[currentAttractionIndex].entry
+                      ) === normalizeString("Varia")
+                        ? "Varia (Depende do dia de visita) "
+                        : attractions[currentAttractionIndex].entry
+                    }`}
+                  </S.Paragraph>
+                </S.ContainerText>
               </>
             ) : (
-              <h1>Attractions</h1>
+              <>
+                <S.ContainerTitle>
+                  <S.Image src={state.images?.image} alt={state.images?.alt} />
+                  <S.Title>Breve Adicionaremos mais atrações</S.Title>
+                </S.ContainerTitle>
+                <S.ContainerEmptyAttractions>
+                  <div style={{ padding: "10px" }}>
+                    <S.Paragraph>
+                      Infelizmente não foi achado nenhuma atração para este
+                      filtro, mas não se decepcione, estamos atualizando
+                      constantemente nosso banco com informações atualizadas de
+                      cada atração, e com certeza breve teremos novidades.
+                    </S.Paragraph>
+                  </div>
+                  <S.LoadingEmptyAttractions
+                    src={LoadingImage}
+                    alt={"carregando..."}
+                  />
+                </S.ContainerEmptyAttractions>
+              </>
             )}
           </>
         ) : (

@@ -15,7 +15,6 @@ export const ContainerContent = styled.div`
     padding-left: 20px;
     margin-left: 20px;
   }
-
 `;
 
 export const ContainerSelect = styled.div`
@@ -101,7 +100,6 @@ export const Wallpaper = styled.img`
     position: initial;
     width: 100%;
   }
-
 `;
 
 export const ArrowRight = styled.img`
@@ -147,7 +145,7 @@ export const ArrowLeft = styled.img`
 
   @media (min-width: 801px) and (max-width: 300px) {
     left: 30%;
-  } 
+  }
 `;
 
 export const ContainerText = styled.div`
@@ -203,4 +201,16 @@ export const Mape = styled.img`
     height: 300px;
     margin-left: 30px;
   }
+`;
+
+export const ContainerEmptyAttractions = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const LoadingEmptyAttractions = styled.img`
+  width: 300px;
+  height: 300px;
 `;
